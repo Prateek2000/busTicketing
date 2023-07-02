@@ -1,5 +1,4 @@
 //export NODE_TLS_REJECT_UNAUTHORIZED='0'
-const initDB = require("init");
 const express = require("express");
 const { Client, Pool } = require("pg");
 const env = require("dotenv").config();
@@ -28,6 +27,12 @@ const pool = new Pool();
 
 app.use(express.json);
 app.use(express.urlencoded({ extended: true }));
+
+app.get("/test", (req, res) => {
+    res.statusCode = 200;
+    res.message = "TEST SUCCESS";
+    return res;
+})
 
 app.post("/ticketing/updateTicket", (req, res) => {
     //expected json: {"ticketNo": 1-40, "value": "Open"/"Closed", if open, "User": {"userName": "name", "contact": "###", "age": 123}}
