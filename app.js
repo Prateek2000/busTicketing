@@ -25,13 +25,11 @@ client.connect(function(err) {
 const pool = new Pool();
 
 
-app.use(express.json);
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.get("/test", (req, res) => {
-    res.statusCode = 200;
-    res.message = "TEST SUCCESS";
-    return res;
+    res.status(200).send("TEST SUCCESS");
 })
 
 app.post("/ticketing/updateTicket", (req, res) => {
@@ -43,41 +41,37 @@ app.post("/ticketing/updateTicket", (req, res) => {
         const client2 = pool.connect();
 
         try {
-            client.query('BEGIN');
-            userid = client.query("select nextval('seq_user_index')");
+            client2.query('BEGIN');
+            userid = client2.query("select nextval('seq_user_index')");
             insertUserText = 'INSERT INTO users(userid, username, contact, age) VALUES($1, $2, $3, $4) RETURNING userid';
-            const res = client.query(insertUserText, [req.body.userid]);
+            const res = client2.query(insertUserText, [req.body.userid]);
             const insertTicketText = "INSERT into ticket(seat, userid) values ($1, $2)";
            
             const insertTicketValues = [req.body.ticketNo, res.row[0].userid];
-            client.query(insertTicketText, insertTicketValues);
-            client.query('COMMIT');
-            res.statusCode = 200;
-            res.body = {message: "Updated"};
-            return res;
+            client2.query(insertTicketText, insertTicketValues);
+            client2.query('COMMIT');
+            res.status(200).send("Updated")
           } catch (e) {
-            client.query('ROLLBACK');
-            res.statusCode = 500;
-            res.body = {message: "Update ticket details failed"};
-            return res;
+            client2.query('ROLLBACK');
+            res.status(500).send("Update ticket details failed")
           } finally {
-            client.release();
+            client2.release();
           }
     }    
 });
 
 app.get("/ticketing/:ticketno/getTicketStatus", (req, res) => {
     //return status of ticket number req.params.ticketno
-    return client.query("select userid from ticket where seat = $1", [req.params.ticketno]).row[0].userid == NULL ? "Closed": "Open"; 
+    res.status(200).send(client.query("select userid from ticket where seat = $1", [req.params.ticketno]).row[0].userid == NULL ? "Closed": "Open");
 });
 
 app.get("/ticketing/getClosedTickets", (req, res) => {
-    return client.query("select seat from ticket where userid != NULL");
+    res.status(200).send(client.query("select seat from ticket where userid != NULL"));
     //return list of numbers which correspond to closed tickets
 });
 
 app.get("/ticketing/getOpenTickets", (req, res) => {
-    return client.query("select seat from ticket where userid = NULL");
+    res.status(200).send(client.query("select seat from ticket where userid = NULL"));
     //return list of numbers which correspond to open tickets
 });
 
@@ -94,8 +88,9 @@ app.put("/ticketing/addUser", (req, res) => {
     bcrypt.hash(req.body.password, saltRounds, function(err, hash) {
         client.query("insert into apiusers values ($1::text, $2, $3)", [req.body.username, hash, req.body.isadmin]);
     })
+    res.status(201).send("User created");
 });
 
-app.listen(3000);
-
-//req.query.id
+app.listen(port, () => {
+    console.log(`Listening on port ${port}`)
+});
