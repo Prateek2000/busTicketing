@@ -1,0 +1,258 @@
+{
+	"info": {
+		"_postman_id": "eb335581-270e-48a3-8bec-524a18d1228d",
+		"name": "authenticate-demo",
+		"description": "ec2 hostname: 43.205.129.107 (set this as env var in postman, or replace {{hostname}} with this IP)\r\n<h2> For the reset API: </h2>\r\n<h3>Admin user: </h3>\r\nadmin / morpheus\r\n<h3>Non admin user: </h3>\r\nuser1 / morbintime",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "test connection",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{hostname}}:3000/test",
+					"protocol": "http",
+					"host": [
+						"{{hostname}}"
+					],
+					"port": "3000",
+					"path": [
+						"test"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add user",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"user1\",\r\n    \"password\": \"morbintime\",\r\n    \"isAdmin\": \"N\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{hostname}}:3000/ticketing/addUser",
+					"protocol": "http",
+					"host": [
+						"{{hostname}}"
+					],
+					"port": "3000",
+					"path": [
+						"ticketing",
+						"addUser"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getOpenTickets",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{hostname}}:3000/ticketing/getOpenTickets",
+					"protocol": "http",
+					"host": [
+						"{{hostname}}"
+					],
+					"port": "3000",
+					"path": [
+						"ticketing",
+						"getOpenTickets"
+					]
+				},
+				"description": "Gives a list of tickets open for booking"
+			},
+			"response": []
+		},
+		{
+			"name": "getClosedTickets",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{hostname}}:3000/ticketing/getClosedTickets",
+					"protocol": "http",
+					"host": [
+						"{{hostname}}"
+					],
+					"port": "3000",
+					"path": [
+						"ticketing",
+						"getClosedTickets"
+					]
+				},
+				"description": "Gives a list of seats closed for booking"
+			},
+			"response": []
+		},
+		{
+			"name": "updateTicket - Opened",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"value\": \"Opened\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{hostname}}:3000/ticketing/11/updateTicket",
+					"protocol": "http",
+					"host": [
+						"{{hostname}}"
+					],
+					"port": "3000",
+					"path": [
+						"ticketing",
+						"11",
+						"updateTicket"
+					]
+				},
+				"description": "Updates the status of a ticket to opened (delete booking)."
+			},
+			"response": []
+		},
+		{
+			"name": "updateTicket - Closed",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"value\": \"Closed\",\r\n    \"user\": {\r\n        \"userName\": \"prateek2\",\r\n        \"contact\": \"sharma2.pratik2000@gmail.com\",\r\n        \"age\": 232\r\n    }   \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{hostname}}:3000/ticketing/11/updateTicket",
+					"protocol": "http",
+					"host": [
+						"{{hostname}}"
+					],
+					"port": "3000",
+					"path": [
+						"ticketing",
+						"11",
+						"updateTicket"
+					]
+				},
+				"description": "Update the status of a given ticket id to closed. (someone booked it)\r\nThe ticketid goes at \":id\" /ticketing/:id/updateTicket\r\nThe JSON body contains user details to whom the seat is assigned"
+			},
+			"response": []
+		},
+		{
+			"name": "getTicketStatus",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{hostname}}:3000/ticketing/7/getTicketStatus",
+					"protocol": "http",
+					"host": [
+						"{{hostname}}"
+					],
+					"port": "3000",
+					"path": [
+						"ticketing",
+						"7",
+						"getTicketStatus"
+					]
+				},
+				"description": "Gives the status of a ticket given by \":id\"(open if unbooked, closed if booked)\r\nhttp://{{hostname}}:3000/ticketing/:id/getTicketStatus"
+			},
+			"response": []
+		},
+		{
+			"name": "getDetails",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{hostname}}:3000/ticketing/7/getDetails",
+					"protocol": "http",
+					"host": [
+						"{{hostname}}"
+					],
+					"port": "3000",
+					"path": [
+						"ticketing",
+						"7",
+						"getDetails"
+					]
+				},
+				"description": "http://{{hostname}}:3000/ticketing/:id/getDetails\r\nGives the details of the person who has booked the (closed) ticket"
+			},
+			"response": []
+		},
+		{
+			"name": "reset",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "user",
+						"value": "admin",
+						"type": "text"
+					},
+					{
+						"key": "authorization",
+						"value": "morpheus",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://{{hostname}}:3000/ticketing/reset",
+					"protocol": "http",
+					"host": [
+						"{{hostname}}"
+					],
+					"port": "3000",
+					"path": [
+						"ticketing",
+						"reset"
+					]
+				},
+				"description": "pass these header params:\r\nuser: username\r\nauthorization: password\r\n"
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
